@@ -1,7 +1,7 @@
 /* global L */
 /* global $ */
 var map = L.map('map', {zoomSnap: 0});
-var myLayer = L.geoJson().addTo(map);
+//var myLayer = L.geoJson().addTo(map);
 
 $.getJSON("export.geojson", {
     "name:uk": "Одеса",
@@ -43,15 +43,68 @@ $.getJSON("export.geojson", {
       }).join('<br/>');
     };
 
-    var geojson = L.geoJson(json, {
-      onEachFeature: function(feature, layer) {
-        var popupHtmlContent = htmlProperties(feature.properties);
-        layer.bindPopup(popupHtmlContent);
+    var prevLayer = null;
+    var highlightFeature = function(e) {
+      if(prevLayer) {
+        geojson.resetStyle(prevLayer);
       }
+      var layer = e.target;
+      prevLayer = layer;
+      layer.setStyle({
+          weight: 1,
+          color: '#fff',
+          fillColor: '#ef8a62',
+          dashArray: '',
+          fillOpacity: 1
+      });
+      if (!L.Browser.ie && !L.Browser.opera) {
+          layer.bringToFront();
+      }
+      info.update(layer.feature.properties);
+    }
+
+    var resetHighlight = function(e) {
+      geojson.resetStyle(e.target);
+      info.update();
+    }
+
+    var onEachFeature = function(feature, layer) {
+        //var popupHtmlContent = htmlProperties(feature.properties);
+        //layer.bindPopup(popupHtmlContent);
+        layer.on({
+            //mouseover: highlightFeature,
+            //mouseout: resetHighlight,
+            click: highlightFeature//zoomToFeature
+        });
+    }
+    function style(feature) {
+        return {
+            fillColor: '#67a9cf', //getColor(feature.properties.density),
+            weight: 1,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 1
+        };
+    }
+    var geojson = L.geoJson(json, {
+      onEachFeature: onEachFeature,
+      style: style
     });
     geojson.addTo(map);
-    myLayer.addData(json);
-    map.fitBounds(myLayer.getBounds());
+    geojson.addData(json);
+    map.fitBounds(geojson.getBounds());
+
+    var info = L.control();
+    info.onAdd = function (map) {
+      this._div = L.DomUtil.create('div', 'info-container');
+      this.update();
+      return this._div;
+    };
+    info.update = function (props) {
+      this._div.innerHTML = props ? '<div class="info">' + htmlProperties(props) + '</div>' : '<div class="info"><h3>Одеська область</h3></div>';
+    };
+    info.addTo(map);
   })
   .fail(function(jqxhr, textStatus, error) {
     var err = textStatus + ", " + error;

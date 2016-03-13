@@ -3,7 +3,7 @@
 var map = L.map('map', {zoomSnap: 0});
 //var myLayer = L.geoJson().addTo(map);
 
-$.getJSON("export.geojson", {
+$.getJSON("../data/export.geojson", {
     "name:uk": "Одеса",
     "type": "boundary"
   }).done(function(json) {

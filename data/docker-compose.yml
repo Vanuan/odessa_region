@@ -1,0 +1,8 @@
+version: '2'
+services:
+  odesa-region:
+    build: .
+    image: odesa-sync
+    volumes:
+    - ./output:/output/files
+    command: ./download.sh

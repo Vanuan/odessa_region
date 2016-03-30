@@ -1,10 +1,16 @@
 var osmtogeojson = require('osmtogeojson');
 var fs = require('fs');
 
+function filterRegion(feature) {
+  var koatuu = "5100000000"; // Odesa
+  var region_mod = 100000000;
+  return (feature.properties.koatuu != undefined && (koatuu / 100000000 == Math.floor(feature.properties.koatuu / region_mod))  );
+}
+
 function filterOut(geojson) {
   var filtered = JSON.parse(JSON.stringify(geojson));
   filtered.features = filtered.features.filter(function(f) {
-    return f.geometry.type != "Point";
+    return f.geometry.type != "Point" && filterRegion(f);
   });
   return filtered;
 }

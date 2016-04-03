@@ -4,7 +4,7 @@ var fs = require('fs');
 function filterRegion(feature) {
   var koatuu = "5100000000"; // Odesa
   var region_mod = 100000000;
-  return (feature.properties.koatuu != undefined && (koatuu / 100000000 == Math.floor(feature.properties.koatuu / region_mod))  );
+  return (feature.properties.koatuu != undefined && (koatuu / 100000000 == Math.floor(feature.properties.koatuu / region_mod) && feature.properties.koatuu % region_mod != 0 )  );
 }
 
 function filterOut(geojson) {

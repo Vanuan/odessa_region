@@ -4,7 +4,7 @@ RUN apk update && apk upgrade && apk add tini
 
 ENTRYPOINT ["tini", "--"]
 
-WORKDIR /output
+WORKDIR /src
 
 COPY npm-shrinkwrap.json .
 COPY package.json .

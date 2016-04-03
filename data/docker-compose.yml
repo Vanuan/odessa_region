@@ -4,5 +4,5 @@ services:
     build: .
     image: odesa-sync
     volumes:
-    - ./output:/output/files
+    - ./:/src
     command: ./download.sh
